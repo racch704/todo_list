@@ -21,18 +21,22 @@ def delete(todo_id):
 
 @app.route('/toggle/<int:todo_id>', methods=['POST'])
 def toggle(todo_id):
-    todo = todos[todo_id]
+    todo = todos.pop(todo_id)
     todo['completed'] = not todo['completed']
+    if todo['completed']:
+        todos.append(todo)
+    else:
+        todos.insert(todo_id, todo)
     return redirect(url_for('index'))
 
-@app.route('/reorder', methods=['POST'])
-def reorder():
-    order = request.form.getlist('order[]')
-    order = list(map(int, order))
-    reordered_todos = [todos[index] for index in order]
-    todos.clear()
-    todos.extend(reordered_todos)
-    return 'OK'
+@app.route('/update/<int:todo_id>', methods=['POST'], endpoint='update_todo')
+def update(todo_id):
+    todo_text = request.form.get('todo')
+    todos[todo_id]['text'] = todo_text
+    return redirect(url_for('index'))
+
+
+
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5000, debug=True)

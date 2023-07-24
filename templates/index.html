@@ -2,35 +2,133 @@
 <html>
 <head>
     <title>Todo List</title>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/todo_list.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
-        .completed {
-            text-decoration: line-through;
+        .task-item {
+            cursor: move;
+            list-style-type: none; /* Remove bullet points */
+            margin: 0;
+            padding: 0;
+        }
+        .task-item .drag-handle {
+            margin-right: 10px;
         }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <script>
+        $(function() {
+            $(".sortable").sortable({
+                handle: ".drag-handle",
+                update: function(event, ui) {
+                    var order = [];
+                    $(this).find(".task-item").each(function() {
+                        order.push($(this).data("id"));
+                    });
+                    $.post("/reorder", { order: order })
+                        .done(function(response) {
+                            console.log("Order updated successfully");
+                        })
+                        .fail(function(error) {
+                            console.error("Error updating order:", error);
+                        });
+                }
+            });
+            $(".sortable").disableSelection();
+        });
+
+        function setCursorToEnd(element) {
+            var range = document.createRange();
+            var selection = window.getSelection();
+            range.selectNodeContents(element);
+            range.collapse(false);
+            selection.removeAllRanges();
+            selection.addRange(range);
+        }
+
+        function handleEdit(todoId) {
+            var todoText = $('#todo-text-' + todoId);
+            var editMode = todoText.attr('contenteditable');
+            var editButton = $('#edit-button-' + todoId);
+
+            if (editMode === 'true') {
+                // Save changes
+                todoText.attr('contenteditable', 'false');
+                todoText.css('border', 'none');
+                editButton.text('Edit');
+            } else {
+                // Enter edit mode
+                todoText.attr('contenteditable', 'true');
+                todoText.css('border', '1px solid #ccc');
+                setCursorToEnd(todoText[0]);
+                editButton.text('Update');
+            }
+        }
+    </script>
 </head>
+
+
 <body>
+
+    <div id="todo_list">
     <h1>Todo List</h1>
     
-    <form action="{{ url_for('add') }}" method="post">
+<div class="title">
+    <form class="form-inline" action="{{ url_for('add') }}" method="post">
         <input type="text" name="todo" placeholder="Add a new todo item">
-        <button type="submit">Add</button>
+        <button class="add-button" type="submit"><i class="fas fa-plus"></i></button> <!-- 'Add' button -->
     </form>
+</div>
 
-    <ul>
+    
+    <h2>Todo</h2>
+    <ul class="sortable">
         {% for todo in todos %}
-            <li>
-                <input type="checkbox" name="completed" {% if todo.completed %}checked{% endif %}
-                    onclick="this.form.submit()">
-                <span class="{% if todo.completed %}completed{% endif %}">{{ todo.text }}</span>
-                <form action="{{ url_for('delete', todo_id=loop.index0) }}" method="post" style="display:inline;">
-                    <button type="submit">Delete</button>
-                </form>
-                <form action="{{ url_for('edit', todo_id=loop.index0) }}" method="post" style="display:inline;">
-                    <input type="text" name="todo" placeholder="Edit todo item" value="{{ todo.text }}">
-                    <button type="submit">Edit</button>
-                </form>
-            </li>
+            {% if not todo.completed %}
+                <li class="task-item" data-id="{{ loop.index0 }}">
+                    <form action="{{ url_for('toggle', todo_id=loop.index0) }}" method="post" style="display:inline;">
+                        <button class="tick-button" type="submit"><i class="fas fa-check"></i></button> <!-- 'Mark as Completed' button -->
+                    </form>
+                    <span id="todo-text-{{ loop.index0 }}" data-id="{{ loop.index0 }}">
+                        <span class="drag-handle">&#9776;</span>
+                        {{ todo.text }}
+                    </span>
+                    <form class="float-right" action="{{ url_for('delete', todo_id=loop.index0) }}" method="post" style="display:inline;">
+                        <button class="delete-button" type="submit"><i class="fas fa-trash"></i></button> <!-- 'Delete' button -->
+                    </form>
+                    <button class="float-right edit-button" id="edit-button-{{ loop.index0 }}" onclick="handleEdit({{ loop.index0 }})"><i class="fas fa-edit "></i></button> <!-- 'Edit' button -->
+                </li>
+            {% endif %}
         {% endfor %}
     </ul>
+
+    <h2>Completed</h2>
+    <ul class="sortable">
+       <!-- Inside Completed list -->
+        {% for todo in todos %}
+        {% if todo.completed %}
+            <li class="task-item" data-id="{{ loop.index0 }}">
+                <form action="{{ url_for('toggle', todo_id=loop.index0) }}" method="post" style="display:inline;">
+                    <button class="undo-button" type="submit"><i class="fas fa-undo"></i></button>
+                </form>
+                <span id="todo-text-{{ loop.index0 }}" data-id="{{ loop.index0 }}">
+                    <span class="drag-handle">&#9776;</span>
+                    <del>{{ todo.text }}</del>
+                </span>
+                <form action="{{ url_for('delete', todo_id=loop.index0) }}" method="post" style="display:inline;">
+                    <button class="float-right delete-button" type="submit"><i class="fas fa-trash"></i></button>
+                </form>
+            </li>
+        {% endif %}
+        {% endfor %}
+
+    </ul>
+    
+    </div>
 </body>
 </html>

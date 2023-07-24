@@ -1,0 +1,131 @@
+body {
+    max-width: 60vw;
+    margin: 10em auto 0 auto;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    font-family: 'Roboto', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #333;
+}
+
+
+#todo_list {
+    margin-left: auto;
+    margin-right: auto;
+    width: 60%;  /* or any desired width */
+
+    margin: 0 auto;
+
+}
+
+.add-button {
+    color: white;
+    background-color: green;
+    border: 2px solid green;
+    border-radius: 50%; /* Makes the button circular */
+    width: 28px; /* Ensures circular shape by having equal width and height */
+    height: 28px;
+    text-align: center;
+    transition: 0.3s;
+    margin-left: 10px; /* Adds space to the left of the button */
+}
+
+.add-button:hover {
+    background-color: white;
+    color: green;
+}
+
+.undo-button {
+    color: white;
+    background-color: blue;
+    border: 2px solid blue;
+    transition: 0.3s;
+}
+
+.undo-button:hover {
+    background-color: white;
+    color: blue;
+}
+
+
+
+#todo_list h1, 
+.title {
+    text-align: center;
+}
+
+.title form {
+    display: inline-block;
+}
+
+
+ul {
+    padding: 0%;
+}
+
+.float-right {
+    float: right;
+}
+
+.tick-button {
+    background-color: green;
+    border: 2px solid green; 
+}
+
+.tick-button:hover {
+    background-color: darkgreen;
+    border-color: darkgreen;
+    color: white;
+}
+
+.tick-button i {
+    color: white;
+}
+
+.edit-button {
+    background-color: #ffbf00;
+    border: 2px solid #ffbf00; 
+}
+
+.edit-button:hover {
+    background-color: goldenrod;
+    border-color: goldenrod;
+    color: white;
+}
+
+.edit-button i {
+    color: white;
+}
+
+.delete-button {
+    background-color: red;
+    border: 2px solid red;
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: darkred;
+    border-color: darkred;
+    color: white;
+}
+
+.delete-button i {
+    color: white;
+}
+
+.edit-button {
+    margin-right: 5px;
+}
+
+.delete-button {
+    margin-left: 5px;
+}
+
+.drag-handle {
+    padding-left: 10px; /* Adjust this value as per your requirement */
+}
+
+
+
