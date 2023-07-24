@@ -5,7 +5,7 @@ body {
     justify-content: center;
     height: 100vh;
     font-family: 'Roboto', sans-serif;
-    font-size: 16px;
+    font-size: 18px;
     line-height: 1.6;
     color: #333;
 }
@@ -19,6 +19,8 @@ body {
     margin: 0 auto;
 
 }
+
+
 
 .add-button {
     color: white;
@@ -49,6 +51,21 @@ body {
     color: blue;
 }
 
+
+input[type="text"] {
+    width: 80%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    font-size: 18px;
+}
+
+input[type="text"]:focus {
+    background-color: white;
+}
 
 
 #todo_list h1, 

@@ -35,6 +35,28 @@ def update(todo_id):
     todos[todo_id]['text'] = todo_text
     return redirect(url_for('index'))
 
+function handleEdit(todoId) {
+    var todoText = $('#todo-text-' + todoId);
+    var editMode = todoText.attr('contenteditable');
+    var editButton = $('#edit-button-' + todoId);
+
+    if (editMode === 'true') {
+        // Save changes
+        todoText.attr('contenteditable', 'false');
+        todoText.css('border', 'none');
+        
+        // Reset editButton to show the icon
+        editButton.html('<i class="fas fa-edit"></i>');
+    } else {
+        // Enter edit mode
+        todoText.attr('contenteditable', 'true');
+        todoText.css('border', '1px solid #ccc');
+        setCursorToEnd(todoText[0]);
+
+        // Change editButton to say 'Update'
+        editButton.text('Update');
+    }
+}
 
 
 
